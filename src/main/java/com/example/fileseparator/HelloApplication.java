@@ -4,10 +4,11 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
@@ -137,7 +138,7 @@ public class HelloApplication extends Application {
                 throw new RuntimeException(ex);
             }
 
-            showSuccess(Stage stage);
+            showSuccess(stage);
         });
         gridPane.add(separateFilesBtn, 1, 1);
 
@@ -241,8 +242,26 @@ public class HelloApplication extends Application {
     /**
      * This function shows the user that it was a success and gives them a box to close the program
      */
-    private void showSuccess() {
-        
+    private void showSuccess(Stage stage) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("");
+        alert.setHeaderText("");
+
+        Label label = new Label("Files are separated");
+
+        Font customFont = Font.font("Fredo", 32);
+        label.setTextFill(Color.BLACK);
+        label.setFont(customFont);
+        alert.setGraphic(label);
+
+        alert.getDialogPane().setMinSize(400, 110);
+        alert.getDialogPane().setMaxSize(400, 110);
+
+        ButtonType closeButtonType = new ButtonType("Close");
+        alert.getButtonTypes().setAll(closeButtonType);
+        alert.showAndWait().ifPresent(buttonType -> {
+            stage.close();
+        });
     }
 
     public static void main(String[] args) {
