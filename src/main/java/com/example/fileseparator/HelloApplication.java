@@ -122,7 +122,7 @@ public class HelloApplication extends Application {
         gridPane.add(addExtensionBtn, 0, 1);
 
         Button separateFilesBtn = new Button();
-        separateFilesBtn.setMinWidth(225);
+        separateFilesBtn.setMinWidth(110);
         separateFilesBtn.setText("Separate Files");
         GridPane.setMargin(separateFilesBtn, new Insets(0, 0, 0, 15));
         separateFilesBtn.setOnAction(e -> {
@@ -133,9 +133,11 @@ public class HelloApplication extends Application {
             try {
                 separateFiles(stage);
             } catch (IOException ex) {
+                System.out.println("Error in separating files");
                 throw new RuntimeException(ex);
             }
         });
+        gridPane.add(separateFilesBtn, 1, 1);
 
     }
 
@@ -150,7 +152,6 @@ public class HelloApplication extends Application {
 
         System.out.println("Extension " + i + ": " + fileExtensions[i - 1]);
     }
-
 
     /**
      * This function creates the subfolders needed to separate the wanted files
