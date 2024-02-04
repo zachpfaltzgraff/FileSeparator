@@ -13,9 +13,12 @@ import javafx.stage.Stage;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 
 public class HelloApplication extends Application {
-    private String selectedFilePath;
+    private String parentFilePath;
     private int i = 0;
     private String[] fileExtensions = new String[5];
     @Override
@@ -28,7 +31,7 @@ public class HelloApplication extends Application {
         gridPane.add(chooseFileBtn, 0, 0);
         gridPane.setHgap(15);
         gridPane.setVgap(15);
-        gridPane.setMargin(chooseFileBtn, new Insets(15, 0, 0, 15));
+        GridPane.setMargin(chooseFileBtn, new Insets(15, 0, 0, 15));
 
         borderPane.getChildren().add(gridPane);
 
@@ -55,8 +58,8 @@ public class HelloApplication extends Application {
         chooseFileBtn.setOnAction(e -> {
             File selectedFile = directoryChooser.showDialog(stage);
             if (selectedFile != null) {
-                selectedFilePath = selectedFile.getAbsolutePath();
-                System.out.println("Selected File Path: " + selectedFilePath);
+                parentFilePath = selectedFile.getAbsolutePath();
+                System.out.println("Selected File Path: " + parentFilePath);
                 chooseFileBtn.setDisable(true);
 
                 Label label = new Label("Folder Was Selected");
@@ -117,6 +120,23 @@ public class HelloApplication extends Application {
             }
         });
         gridPane.add(addExtensionBtn, 0, 1);
+
+        Button separateFilesBtn = new Button();
+        separateFilesBtn.setMinWidth(225);
+        separateFilesBtn.setText("Separate Files");
+        GridPane.setMargin(separateFilesBtn, new Insets(0, 0, 0, 15));
+        separateFilesBtn.setOnAction(e -> {
+            addExtensionBtn.setDisable(true);
+
+            createSubFolders();
+
+            try {
+                separateFiles(stage);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
     }
 
     /**
@@ -131,6 +151,86 @@ public class HelloApplication extends Application {
         System.out.println("Extension " + i + ": " + fileExtensions[i - 1]);
     }
 
+
+    /**
+     * This function creates the subfolders needed to separate the wanted files
+     */
+    private void createSubFolders() {
+        int k = 0;
+        while (fileExtensions[k] != null) {
+            File subFolder = new File(parentFilePath, fileExtensions[k]);
+
+            if (subFolder.exists()) {
+                System.out.println("Subfolder already exists");
+            }
+            else {
+                boolean success = subFolder.mkdir();
+
+                if (success) {
+                    System.out.println("subfolder created successfully");
+                }
+                else {
+                    System.out.println("failed to create subfolder");
+                }
+            }
+        }
+    }
+
+    /**
+     * this function separates the files
+     * @param stage the stage
+     * @throws IOException for organizeFile
+     */
+    private void separateFiles(Stage stage) throws IOException {
+        DirectoryChooser directoryChooser = new DirectoryChooser();
+        File parentDirectory = directoryChooser.showDialog(stage);
+        File[] unsortedFiles = parentDirectory.listFiles();
+
+        if (unsortedFiles != null) {
+            for(File file : unsortedFiles) {
+                if (file.isFile()) {
+                    String extension = getFileExtension(file.getName());
+
+                    organizeFile(file, extension, parentDirectory.toPath());
+                }
+            }
+        }
+    }
+
+    /**
+     * this function will get the file extension
+     *
+     * @param fileName the file to find the extension of
+     * @return the file extension
+     */
+    private String getFileExtension(String fileName) {
+        int lastDotIndex = fileName.lastIndexOf('.');
+
+        if (lastDotIndex > 0) {
+            return fileName.substring(lastDotIndex + 1);
+        }
+        else {
+            return "";
+        }
+    }
+
+    /**
+     * This will organize the files
+     *
+     * @param file the file to move
+     * @param extension the file extension
+     * @param destinationPath the destination of the file
+     * @throws IOException for the destinationPath
+     */
+    private void organizeFile(File file, String extension, Path destinationPath) throws IOException {
+        for (int k = 0; k < 5; k++) {
+            if (extension.equalsIgnoreCase(fileExtensions[k])) {
+                Path subFolderPath = destinationPath.resolve(fileExtensions[k]);
+                Files.createDirectories(subFolderPath);
+                Files.move(file.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+            }
+        }
+    }
     public static void main(String[] args) {
         launch();
     }
