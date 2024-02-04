@@ -36,10 +36,17 @@ public class HelloApplication extends Application {
         stage.setTitle("File Separator");
         stage.setScene(scene);
         stage.show();
-        stage.setMaxHeight(400);
-        stage.setMaxWidth(500);
+        stage.setMaxHeight(500);
+        stage.setMaxWidth(600);
     }
 
+    /**
+     * This function gets the starting folder that the user wants to separate the contents of
+     *
+     * @param stage the stage of the gui
+     * @param gridPane the gridpane for the gui
+     * @return the file choose button
+     */
     private Button getStartingFolder(Stage stage, GridPane gridPane) {
         DirectoryChooser directoryChooser = new DirectoryChooser();
         Button chooseFileBtn = new Button();
@@ -54,7 +61,7 @@ public class HelloApplication extends Application {
 
                 Label label = new Label("Folder Was Selected");
                 label.setMinWidth(110);
-                gridPane.setMargin(label, new Insets(15, 0, 0, 0));
+                GridPane.setMargin(label, new Insets(15, 0, 0, 0));
                 gridPane.add(label, 1, 0);
 
                 selectFileExtensions(stage, gridPane);
@@ -63,30 +70,39 @@ public class HelloApplication extends Application {
         return chooseFileBtn;
     }
 
+    /**
+     * This function lets users select the extensions (up to 5) that they want to separate
+     * in the given folder they specified earlier
+     *
+     * @param stage the stage of the gui
+     * @param gridPane the gridpane used in the gui, to add new buttons
+     */
     private void selectFileExtensions(Stage stage, GridPane gridPane) {
         Button addExtensionBtn = new Button();
         addExtensionBtn.setMinWidth(225);
         addExtensionBtn.setText("Add File Extension (Max 5)");
-        gridPane.setMargin(addExtensionBtn, new Insets(0, 0, 0, 15));
+        GridPane.setMargin(addExtensionBtn, new Insets(0, 0, 0, 15));
         addExtensionBtn.setOnAction(e -> {
             if (!addExtensionBtn.isDisable()) {
+                addExtensionBtn.setDisable(true);
                 Label label = new Label("Write Extension in the format \"extension\":");
-                gridPane.setMargin(label, new Insets(0, 0, 0, 15));
+                GridPane.setMargin(label, new Insets(0, 0, 0, 15));
                 label.setMinWidth(225);
 
                 TextField textField = new TextField();
                 textField.setPromptText("jpeg");
                 textField.setMaxWidth(110);
-                gridPane.setMargin(textField, new Insets(0, 0, 0, 15));
+                GridPane.setMargin(textField, new Insets(0, 0, 0, 15));
 
                 Button submitBtn = new Button();
                 submitBtn.setText("Submit");
                 submitBtn.setMinWidth(110);
-                gridPane.setMargin(submitBtn, new Insets(0, 0, 0, 15));
+                GridPane.setMargin(submitBtn, new Insets(0, 0, 0, 15));
                 submitBtn.setOnAction(event -> {
-                    submit(event, textField, i);
+                    submit(textField, i);
 
                     submitBtn.setDisable(true);
+                    addExtensionBtn.setDisable(false);
                 });
 
 
@@ -101,13 +117,18 @@ public class HelloApplication extends Application {
             }
         });
         gridPane.add(addExtensionBtn, 0, 1);
-
     }
 
-    private void submit(ActionEvent event, TextField textField, int i) {
-        fileExtensions[i] = textField.getText();
+    /**
+     * Function that adds the extension into the extensions array
+     *
+     * @param textField the textfield of the extension
+     * @param i index for the extensions array
+     */
+    private void submit(TextField textField, int i) {
+        fileExtensions[i - 1] = textField.getText();
 
-        System.out.println(fileExtensions[i]);
+        System.out.println("Extension " + i + ": " + fileExtensions[i - 1]);
     }
 
     public static void main(String[] args) {
