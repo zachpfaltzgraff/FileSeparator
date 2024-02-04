@@ -136,6 +136,8 @@ public class HelloApplication extends Application {
                 System.out.println("Error in separating files");
                 throw new RuntimeException(ex);
             }
+
+            showSuccess(Stage stage);
         });
         gridPane.add(separateFilesBtn, 1, 1);
 
@@ -174,6 +176,7 @@ public class HelloApplication extends Application {
                     System.out.println("failed to create subfolder");
                 }
             }
+            k++;
         }
     }
 
@@ -183,16 +186,15 @@ public class HelloApplication extends Application {
      * @throws IOException for organizeFile
      */
     private void separateFiles(Stage stage) throws IOException {
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        File parentDirectory = directoryChooser.showDialog(stage);
-        File[] unsortedFiles = parentDirectory.listFiles();
+        File parentFile = new File(parentFilePath);
+        File[] unsortedFiles = parentFile.listFiles();
 
         if (unsortedFiles != null) {
             for(File file : unsortedFiles) {
                 if (file.isFile()) {
                     String extension = getFileExtension(file.getName());
 
-                    organizeFile(file, extension, parentDirectory.toPath());
+                    organizeFile(file, extension, parentFile.toPath());
                 }
             }
         }
@@ -228,10 +230,21 @@ public class HelloApplication extends Application {
             if (extension.equalsIgnoreCase(fileExtensions[k])) {
                 Path subFolderPath = destinationPath.resolve(fileExtensions[k]);
                 Files.createDirectories(subFolderPath);
-                Files.move(file.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+                Files.move(file.toPath(), subFolderPath.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
+
+                System.out.println("Successfully moved file: " + file);
             }
         }
     }
+
+
+    /**
+     * This function shows the user that it was a success and gives them a box to close the program
+     */
+    private void showSuccess() {
+        
+    }
+
     public static void main(String[] args) {
         launch();
     }
