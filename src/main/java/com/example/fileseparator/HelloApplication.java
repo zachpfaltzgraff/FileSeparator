@@ -233,6 +233,7 @@ public class HelloApplication extends Application {
                 Files.createDirectories(subFolderPath);
                 Files.move(file.toPath(), subFolderPath.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
 
+                Label label = new Label();
                 System.out.println("Successfully moved file: " + file);
             }
         }
