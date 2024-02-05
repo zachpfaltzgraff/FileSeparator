@@ -5,7 +5,6 @@ import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
@@ -159,7 +158,7 @@ public class HelloApplication extends Application {
      */
     private void createSubFolders() {
         int k = 0;
-        while (fileExtensions[k] != null) {
+        while (fileExtensions[k] != null && k < 4) {
             File subFolder = new File(parentFilePath, fileExtensions[k]);
 
             if (subFolder.exists()) {
@@ -231,8 +230,7 @@ public class HelloApplication extends Application {
                 Files.createDirectories(subFolderPath);
                 Files.move(file.toPath(), subFolderPath.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
 
-                Label label = new Label("Successfully moved file: " + file);
-                gridPane.add(label, 1, 7);
+                System.out.println("Successfully moved file: " + file);
             }
         }
     }
@@ -249,7 +247,6 @@ public class HelloApplication extends Application {
         Label label = new Label("Files are separated");
 
         Font customFont = Font.font("Fredo", 32);
-        label.setTextFill(Color.BLACK);
         label.setFont(customFont);
         alert.setGraphic(label);
 
