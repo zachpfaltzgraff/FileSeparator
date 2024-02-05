@@ -1,11 +1,9 @@
 package com.example.fileseparator;
 
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.effect.DropShadow;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -132,7 +130,7 @@ public class HelloApplication extends Application {
             createSubFolders();
 
             try {
-                separateFiles(stage);
+                separateFiles(gridPane);
             } catch (IOException ex) {
                 System.out.println("Error in separating files");
                 throw new RuntimeException(ex);
@@ -183,10 +181,10 @@ public class HelloApplication extends Application {
 
     /**
      * this function separates the files
-     * @param stage the stage
+     *
      * @throws IOException for organizeFile
      */
-    private void separateFiles(Stage stage) throws IOException {
+    private void separateFiles(GridPane gridPane) throws IOException {
         File parentFile = new File(parentFilePath);
         File[] unsortedFiles = parentFile.listFiles();
 
@@ -195,7 +193,7 @@ public class HelloApplication extends Application {
                 if (file.isFile()) {
                     String extension = getFileExtension(file.getName());
 
-                    organizeFile(file, extension, parentFile.toPath());
+                    organizeFile(file, extension, parentFile.toPath(), gridPane);
                 }
             }
         }
@@ -226,15 +224,15 @@ public class HelloApplication extends Application {
      * @param destinationPath the destination of the file
      * @throws IOException for the destinationPath
      */
-    private void organizeFile(File file, String extension, Path destinationPath) throws IOException {
+    private void organizeFile(File file, String extension, Path destinationPath, GridPane gridPane) throws IOException {
         for (int k = 0; k < 5; k++) {
             if (extension.equalsIgnoreCase(fileExtensions[k])) {
                 Path subFolderPath = destinationPath.resolve(fileExtensions[k]);
                 Files.createDirectories(subFolderPath);
                 Files.move(file.toPath(), subFolderPath.resolve(file.getName()), StandardCopyOption.REPLACE_EXISTING);
 
-                Label label = new Label();
-                System.out.println("Successfully moved file: " + file);
+                Label label = new Label("Successfully moved file: " + file);
+                gridPane.add(label, 1, 7);
             }
         }
     }
